@@ -150,7 +150,7 @@ Parcel offers a range of features to enhance development and production workflow
 - **Minification**: Compresses code to minimize file sizes.
 - **Production Builds**: Generates optimized bundles for deployment.
 
-For a comprehensive list of features, visit the [official Parcel documentation](https://parceljs.org/features/).
+For a comprehensive list of features, visit the [official Parcel documentation](https://parceljs.org/).
 
 ### Conclusion
 
