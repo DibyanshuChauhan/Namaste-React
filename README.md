@@ -150,7 +150,34 @@ Parcel offers a range of features to enhance development and production workflow
 - **Minification**: Compresses code to minimize file sizes.
 - **Production Builds**: Generates optimized bundles for deployment.
 
-For a comprehensive list of features, visit the [official Parcel documentation](https://parceljs.org/).
+For a comprehensive list of features, visit the [official Parcel documentation](https://parceljs.org/features/).
+
+    ### Configuring Package.json for Easier Commands
+
+Instead of running `npx parcel index.html` for development and `npx parcel build index.html` for production every time, we can configure our `package.json` file to simplify this process:
+
+```json
+"scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html"
+}
+```
+
+Now, you can start the development server with:
+
+```sh
+npm run start
+```
+
+And create a production build with:
+
+```sh
+npm run build
+```
+
+This makes running Parcel much more efficient and avoids repetitive commands.
+
+<existing README content>
 
 ### Conclusion
 
