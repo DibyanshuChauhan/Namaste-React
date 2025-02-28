@@ -3,8 +3,16 @@
   "version": "1.0.0",
   "description": "**Namaste React** is a project-based course by Akshay Saini, covering React.js from basics to advanced topics like Hooks, Redux, and Config Driven UI. It includes hands-on projects (e.g., NetflixGPT), structured notes, assignments, and career tips. Perfect for beginners and experienced developers.",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "start": "parcel index.html",
+    "build": "parcel build index.html"
   },
+
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DibyanshuChauhan/Namaste-React"
+    },
+
   "keywords": [],
   "author": "Akshay_Saini",
   "license": "ISC",
