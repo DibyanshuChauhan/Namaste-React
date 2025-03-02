@@ -9,7 +9,7 @@ const root = ReactDOM.createRoot(rootElement);
 const heading = React.createElement("h1", { id: "heading" }, "Hello, world!");
 
 // Creating a div inside another div inside another div
-const nestedDivs = React.createElement(
+const nestedDivs = React.createElement(  // the type of React.createElement is object 
   "div", // Parent div
   { id: "parent" },
   React.createElement(
