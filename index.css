@@ -1,0 +1,47 @@
+/* Styling for the heading created using React.createElement */
+#heading {
+    font-size: 2rem;
+    color: #ff5733;
+    text-align: center;
+    margin: 20px 0;
+  }
+  
+  /* Styling for JSX heading */
+  #jsx-heading {
+    font-size: 2rem;
+    color: #337aff;
+    text-align: center;
+    margin: 20px 0;
+  }
+  
+  /* Parent div styling */
+  #parent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border: 2px solid #333;
+    background-color: #f4f4f4;
+    width: 300px;
+    margin: 20px auto;
+  }
+  
+  /* Child div styling */
+  #child {
+    padding: 15px;
+    border: 2px solid #555;
+    background-color: #ddd;
+    width: 80%;
+    text-align: center;
+  }
+  
+  /* Grandchild div styling */
+  #grandchild {
+    padding: 10px;
+    border: 2px solid #777;
+    background-color: #bbb;
+    font-weight: bold;
+    width: 60%;
+  }
+  
