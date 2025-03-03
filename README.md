@@ -899,3 +899,444 @@ This README provides a detailed **UI planning, wireframe structure, and project 
 ## 📸 Wireframe Preview
 
 ![App Wireframe](./assets/images/wireframe.jpg)
+
+# React Props Guide
+
+## Overview
+
+In React, **props** (short for "properties") are read-only attributes used to pass data from one component to another, typically from a parent component to its child. They enable components to be dynamic and reusable by allowing them to render different outputs based on the data received.
+
+---
+
+## Using Props in a React Project
+
+### 1. Passing Props from Parent to Child
+
+Props are passed as attributes when rendering a child component within a parent component.
+
+#### Example:
+
+```jsx
+function ChildComponent(props) {
+  return <h1>Hello, {props.name}!</h1>;
+}
+
+function ParentComponent() {
+  return <ChildComponent name="John" />;
+}
+
+export default ParentComponent;
+```
+
+In this example, `ParentComponent` passes the `name` prop with the value "John" to `ChildComponent`, which then renders "Hello, John!".
+
+---
+
+### 2. Accessing Props in Functional Components
+
+Functional components receive props as an argument.
+
+#### Example:
+
+```jsx
+function Greeting({ name }) {
+  return <h1>Welcome, {name}!</h1>;
+}
+
+function App() {
+  return <Greeting name="Alice" />;
+}
+
+export default App;
+```
+
+Here, the `Greeting` component destructures the `name` prop directly in its parameter list for cleaner syntax.
+
+---
+
+### 3. Accessing Props in Class Components
+
+In class components, props are accessed via `this.props`.
+
+#### Example:
+
+```jsx
+import React, { Component } from "react";
+
+class Welcome extends Component {
+  render() {
+    return <h1>Hello, {this.props.name}!</h1>;
+  }
+}
+
+export default function App() {
+  return <Welcome name="Bob" />;
+}
+```
+
+In this case, the `Welcome` class component accesses the `name` prop using `this.props.name`.
+
+---
+
+## Rules for Using Props in React
+
+### 1. Props are Read-Only
+
+Props cannot be modified inside the child component. They are immutable and should not be changed.
+
+#### Incorrect:
+
+```jsx
+function Child(props) {
+  props.name = "Mike"; // ❌ Error: Cannot assign to 'name' because it is a read-only property
+  return <h1>Hello, {props.name}!</h1>;
+}
+```
+
+#### Correct:
+
+```jsx
+function Child({ name }) {
+  return <h1>Hello, {name}!</h1>;
+}
+```
+
+In the correct example, the `name` prop is used as received without attempting to modify it.
+
+---
+
+### 2. Props Can Be of Any Data Type
+
+Props can hold various data types, including strings, numbers, objects, arrays, functions, JSX, or even components.
+
+#### Example:
+
+```jsx
+function UserProfile({ user }) {
+  return (
+    <h1>
+      {user.name} is {user.age} years old.
+    </h1>
+  );
+}
+
+function App() {
+  const userInfo = { name: "Alice", age: 25 };
+  return <UserProfile user={userInfo} />;
+}
+```
+
+Here, the `user` prop is an object containing `name` and `age` properties.
+
+---
+
+### 3. Props Cannot Be Modified in the Child Component
+
+Instead of modifying props, pass a function from the parent that updates the state. This allows the child component to request changes without directly altering the props.
+
+#### Example: Updating Parent State via Props
+
+```jsx
+function Child({ updateMessage }) {
+  return (
+    <button onClick={() => updateMessage("New Message")}>Change Message</button>
+  );
+}
+
+function Parent() {
+  const [message, setMessage] = React.useState("Hello");
+
+  return (
+    <div>
+      <h1>{message}</h1>
+      <Child updateMessage={setMessage} />
+    </div>
+  );
+}
+
+export default Parent;
+```
+
+In this example, the `Child` component receives a function `updateMessage` as a prop and calls it to update the parent's state.
+
+---
+
+## Ways to Use Props Across Components
+
+### 1. Using Props in the Same Component
+
+Props can be used within a single component to dynamically update content.
+
+#### Example:
+
+```jsx
+function Button({ label }) {
+  return <button>{label}</button>;
+}
+
+export default function App() {
+  return <Button label="Click Me" />;
+}
+```
+
+Here, the `Button` component uses the `label` prop to set its displayed text.
+
+---
+
+### 2. Passing Props to Multiple Child Components
+
+You can pass the same or different props to multiple child components.
+
+#### Example:
+
+```jsx
+function Card({ title, description }) {
+  return (
+    <div>
+      <h2>{title}</h2>
+      <p>{description}</p>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <div>
+      <Card
+        title="React"
+        description="A JavaScript library for building user interfaces."
+      />
+      <Card title="Vue" description="A progressive JavaScript framework." />
+    </div>
+  );
+}
+```
+
+In this example, two `Card` components receive different `title` and `description` props.
+
+---
+
+### 3. Passing Props Through Multiple Levels (Prop Drilling)
+
+If a prop needs to be passed down multiple levels, it's called **prop drilling**.
+
+#### Example:
+
+```jsx
+function Child({ message }) {
+  return <h2>{message}</h2>;
+}
+
+function Parent({ message }) {
+  return <Child message={message} />;
+}
+
+function App() {
+  return <Parent message="Hello from App!" />;
+}
+```
+
+In this scenario, the `message` prop is passed from `App` to `Parent`, and then to `Child`.
+
+**Note:** Excessive prop drilling can make the code hard to maintain. To avoid this, consider using the **Context API** or state management libraries like **Redux**.
+
+# Destructuring in React: A Comprehensive Guide
+
+Destructuring is a JavaScript feature introduced in ES6 that allows developers to extract values from arrays or objects into distinct variables. In React, destructuring is commonly used to simplify access to props and state, enhancing code readability and maintainability. citeturn0search0
+
+## Table of Contents
+
+1. [Destructuring in Function Parameters](#1-destructuring-in-function-parameters)
+2. [Destructuring in Function Bodies](#2-destructuring-in-function-bodies)
+3. [Destructuring in JSX](#3-destructuring-in-jsx)
+4. [Best Practices](#4-best-practices)
+5. [Conclusion](#5-conclusion)
+
+---
+
+## 1. Destructuring in Function Parameters
+
+Instead of accessing properties through the `props` object, you can destructure them directly in the function parameters.
+
+**Example: Without Destructuring**
+
+```jsx
+const UserProfile = (props) => {
+  return <h1>Welcome, {props.name}!</h1>;
+};
+```
+
+**Example: With Destructuring**
+
+```jsx
+const UserProfile = ({ name }) => {
+  return <h1>Welcome, {name}!</h1>;
+};
+```
+
+This approach makes the code cleaner and avoids repetitive `props.` references. citeturn0search14
+
+---
+
+## 2. Destructuring in Function Bodies
+
+You can also destructure props or state within the function body.
+
+**Example: Without Destructuring**
+
+```jsx
+const UserProfile = (props) => {
+  const name = props.name;
+  const age = props.age;
+
+  return (
+    <h1>
+      {name} is {age} years old.
+    </h1>
+  );
+};
+```
+
+**Example: With Destructuring**
+
+```jsx
+const UserProfile = (props) => {
+  const { name, age } = props;
+
+  return (
+    <h1>
+      {name} is {age} years old.
+    </h1>
+  );
+};
+```
+
+This reduces redundancy and enhances readability. citeturn0search0
+
+---
+
+## 3. Destructuring in JSX
+
+Destructuring can be applied directly within JSX expressions.
+
+**Example: Without Destructuring**
+
+```jsx
+const user = { name: "John", age: 25 };
+
+const UserProfile = () => {
+  return (
+    <h1>
+      {user.name} is {user.age} years old.
+    </h1>
+  );
+};
+```
+
+**Example: With Destructuring**
+
+```jsx
+const user = { name: "John", age: 25 };
+
+const UserProfile = () => {
+  const { name, age } = user;
+  return (
+    <h1>
+      {name} is {age} years old.
+    </h1>
+  );
+};
+```
+
+This approach simplifies the code by eliminating the need for repetitive object references.
+
+---
+
+## 4. Best Practices
+
+- **Consistency**: Apply destructuring consistently across your codebase to maintain readability.
+
+- **Nested Destructuring**: For deeply nested objects, consider nested destructuring for cleaner code.
+
+- **Default Values**: Assign default values during destructuring to handle undefined properties gracefully.
+
+---
+
+## 5. Conclusion
+
+Destructuring is a powerful feature in React that simplifies code and enhances readability. By adopting destructuring in function parameters, bodies, JSX, and state hooks, developers can write more concise and maintainable code.
+
+For more detailed information, refer to the official React documentation on [Passing Props to a Component](https://react.dev/learn/passing-props-to-a-component).
+
+# Config-Driven UI in React
+
+## Overview
+
+Config-driven UI in React is a design approach where the structure and behavior of the user interface are defined through configuration files—typically in formats like JSON or YAML—rather than being hard-coded within the application. This method allows developers to outline UI components, layouts, and interactions in external files, which the application then reads to render the interface accordingly.
+
+## How Is It Used?
+
+In a React application, implementing a config-driven UI involves creating configuration files that specify the UI's elements and their properties. The application includes a renderer component that parses these configuration files and dynamically generates the corresponding UI components.
+
+### Example Implementation
+
+#### 1. Define the Configuration File (config.json):
+
+```json
+{
+  "form": {
+    "fields": [
+      { "label": "Name", "type": "text", "required": true },
+      { "label": "Email", "type": "email", "required": true },
+      { "label": "Age", "type": "number", "required": false }
+    ]
+  }
+}
+```
+
+#### 2. Create the Renderer Component:
+
+```jsx
+import React from "react";
+import config from "./config.json";
+
+const FormRenderer = () => (
+  <form>
+    {config.form.fields.map((field, index) => (
+      <div key={index}>
+        <label>{field.label}</label>
+        <input type={field.type} required={field.required} />
+      </div>
+    ))}
+  </form>
+);
+
+export default FormRenderer;
+```
+
+In this example, the `config.json` file outlines the form fields, and the `FormRenderer` component reads this configuration to render the form dynamically.
+
+## Why Is It Used?
+
+The primary motivation for using a config-driven UI is to enhance flexibility and maintainability in application development. By decoupling the UI structure from the application logic, developers can modify the user interface without altering the core codebase. This separation allows for easier updates, customization, and scalability.
+
+## Advantages of Using Config-Driven UI
+
+- **Flexibility and Scalability:** Changes to the UI can be made by updating configuration files, facilitating rapid adjustments and scalability without extensive code modifications.
+- **Easier Maintenance:** With UI definitions separate from business logic, maintaining and updating the application becomes more straightforward, reducing the risk of introducing bugs during UI changes.
+- **Consistency:** Centralized configuration ensures uniformity across the application, as the same UI components and patterns can be reused and managed systematically.
+- **Empowering Non-Developers:** Stakeholders without deep programming knowledge can adjust the UI by editing configuration files, streamlining collaboration between developers and designers or product managers.
+
+## Is It Considered Good Practice?
+
+Implementing a config-driven UI is generally considered a good practice, especially for applications requiring frequent UI changes or customization. It promotes a clear separation of concerns, enhances adaptability, and can lead to more efficient development workflows. However, it's essential to balance configurability with complexity; overly intricate configurations can become challenging to manage and may require robust validation and documentation.
+
+## Additional Considerations
+
+- **Performance:** Loading and parsing large configuration files can impact performance. Implementing lazy loading or optimizing the configuration structure can mitigate potential issues.
+- **Security:** Ensure that configuration files are secure and validated to prevent unauthorized or malicious modifications that could affect the UI or application behavior.
+- **Tooling and Documentation:** Providing tools for editing configurations and maintaining clear documentation is crucial for teams to effectively utilize a config-driven approach.
+
+## Conclusion
+
+A config-driven UI in React offers a flexible and maintainable strategy for managing user interfaces, allowing for dynamic rendering based on external configurations. This approach can lead to more adaptable and scalable applications, provided that considerations around complexity, performance, and security are appropriately addressed.
