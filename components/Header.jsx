@@ -1,8 +1,10 @@
+import { LOGO_URL } from "./utils/constant";
+
 const Header = () => {
     return (
         <div className="header">
             <div className="header__logo">
-                <img className="image" src="https://marketplace.canva.com/EAFowsrK6x8/1/0/1600w/canva-red-and-yellow-catering-flat-illustrative-food-place-logo-rYbQJ_qtaz8.jpg" alt="Food App Logo" />
+                <img className="image" src={LOGO_URL} alt="Food App Logo" />
             </div>
             <input className="textarea" type="text" placeholder="Enter the Item to Search..." />
             <button className="btn">Search</button>
