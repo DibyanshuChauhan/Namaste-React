@@ -1,19 +1,21 @@
-import { RESTAURANT_IMAGE_URL } from "./utils/constant";
+import { RESTAURANT_IMAGE_URL } from "../utils/constant";
 // To import a named export we always use the same name as the exported variable within the curly braces {}.
 
-const RestaurantCard = () => {
+const RestaurantCard = ({ restaurant }) => {
+    // console.log(restaurant);
+    // console.log(restaurant.info.cloudinaryImageId);
     return (
         <div className="restaurant_card">
             <div className="restaurant__image">
-                <img className="image" src={RESTAURANT_IMAGE_URL} alt="Restaurant" />
+                <img className="image" src={RESTAURANT_IMAGE_URL + restaurant?.info?.cloudinaryImageId} alt="Restaurant" />
             </div>
             <div className="restaurant__details">
-                <h1>Restaurant Name</h1>
-                <p className="cuisines">Cuisines</p>
-                <p>Address: 123, ABC Street, XYZ City</p>
-                <p>Rating: 4.5</p>
-                <p className="delivery">Delivery Time</p>
-                <p>Reviews: 1000</p>
+                <h1>{restaurant?.info?.name}</h1>
+                <p className="cuisines">{restaurant?.info?.cuisines.join(", ")}</p>
+                <p>Area: {restaurant?.info?.areaName}</p>
+                <p>Rating: {restaurant?.info?.avgRating || restaurant?.info?.avgRatingString}</p>
+                <p className="delivery">{restaurant?.info?.sla?.slaString}</p>
+                <p>{restaurant?.info?.costForTwo}</p>
             </div>
         </div>
     );

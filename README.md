@@ -1885,3 +1885,514 @@ function Counter() {
 - When the "Increment" button is clicked, the `increment` function is invoked, updating the state and causing React to re-render the `Counter` component with the new `count` value.
 
 This behavior exemplifies how React's state management and re-rendering process work together to create interactive user interfaces.
+
+# Monolith vs Microservices Architecture
+
+## **Monolith Architecture**
+
+Monolith architecture is a traditional software development approach where an entire application is built as a single, unified unit. All components—frontend, backend, database, and business logic—are tightly coupled and reside in one codebase.
+
+### **File Structure of Monolith Architecture**
+
+A typical monolithic project structure:
+
+```
+/my-monolith-app
+│── /src
+│   ├── /controllers  # Handles incoming requests
+│   ├── /models       # Database models
+│   ├── /views        # UI templates (for MVC-based apps)
+│   ├── /routes       # Application routes
+│   ├── /services     # Business logic
+│   ├── /middlewares  # Middleware functions
+│   ├── /utils        # Helper functions
+│── /public           # Static files (CSS, JS, images)
+│── /config           # Configuration files (DB, environment, etc.)
+│── /tests            # Unit and integration tests
+│── package.json      # Dependencies and scripts
+│── server.js         # Main entry point
+```
+
+Everything runs in a single process, making it easier to develop and deploy initially.
+
+### **Drawbacks of Monolith Architecture**
+
+1. **Scalability Issues** – Difficult to scale specific parts of the application independently.
+2. **Tightly Coupled Components** – A small change can affect the entire application.
+3. **Longer Deployment Time** – Any minor update requires redeploying the entire application.
+4. **Difficult Maintenance** – As the application grows, managing a single large codebase becomes complex.
+5. **Technology Lock-in** – Hard to switch to new technologies since everything is interconnected.
+
+---
+
+## **Microservices Architecture**
+
+Microservices architecture is a modern approach where an application is divided into small, independent services, each handling a specific functionality. These services communicate via APIs (REST, GraphQL, or gRPC).
+
+### **File Structure of Microservices Architecture**
+
+Instead of one large project, multiple small services exist. Example:
+
+```
+/my-microservices-app
+│── /services
+│   ├── /auth-service
+│   │   ├── /src
+│   │   ├── /models
+│   │   ├── /controllers
+│   │   ├── /routes
+│   │   ├── server.js
+│   │   ├── package.json
+│   │   ├── Dockerfile
+│   ├── /user-service
+│   │   ├── /src
+│   │   ├── /models
+│   │   ├── /controllers
+│   │   ├── /routes
+│   │   ├── server.js
+│   │   ├── package.json
+│   │   ├── Dockerfile
+│   ├── /order-service
+│   │   ├── /src
+│   │   ├── /models
+│   │   ├── /controllers
+│   │   ├── /routes
+│   │   ├── server.js
+│   │   ├── package.json
+│   │   ├── Dockerfile
+│── /gateway            # API Gateway for routing requests
+│── /config             # Environment configurations
+│── /docker-compose.yml # Orchestration file for Docker services
+│── package.json        # If needed at the root level
+```
+
+Each microservice has its own database, dependencies, and runs independently.
+
+### **Advantages of Monolith Architecture**
+
+1. **Easier Development & Debugging** – Everything is in one place, making local development simple.
+2. **Faster Deployment** – No need to manage multiple services, a single deployment covers everything.
+3. **Simple Communication** – Components communicate directly, without needing external APIs.
+4. **Less Complexity** – No need for API gateways, inter-service authentication, or service discovery.
+5. **Lower Infrastructure Cost** – No need for multiple databases, load balancers, or container orchestration.
+
+---
+
+## **How Services Interact to Make the Whole Application Work**
+
+- **Monolith Architecture**: Direct function calls within the same codebase.
+- **Microservices Architecture**: Services communicate via HTTP REST APIs, WebSockets, or messaging queues (e.g., Kafka, RabbitMQ).
+- **Database Communication**: Each microservice typically has its own database to prevent conflicts.
+- **Service Discovery**: Tools like Kubernetes or Consul help microservices find each other dynamically.
+
+### **Different Port Numbers & Domain Mapping in Microservices**
+
+Each microservice can run on a different port:
+
+- `Auth Service` → `localhost:4001`
+- `User Service` → `localhost:4002`
+- `Order Service` → `localhost:4003`
+
+Instead of users accessing services on different ports, an **API Gateway** (e.g., Nginx, Kong, Traefik) routes requests based on domain paths:
+
+- `https://myapp.com/auth` → Maps to `localhost:4001`
+- `https://myapp.com/users` → Maps to `localhost:4002`
+- `https://myapp.com/orders` → Maps to `localhost:4003`
+
+This makes the application user-friendly while keeping services independent.
+
+# **Understanding the \*\***\*\***\*\***`useEffect`\***\*\*\*\*\*\*\*** Hook in React\*\*
+
+## **1. What is \*\***\*\***\*\***`useEffect`\***\*\*\*\*\*\*\***?\*\*
+
+The `useEffect` hook in React allows functional components to handle side effects such as **data fetching, subscriptions, DOM manipulations, and timers**.
+
+### **Basic Syntax:**
+
+```jsx
+import { useEffect } from "react";
+
+useEffect(() => {
+  // Side effect logic here
+
+  return () => {
+    // Cleanup logic (optional)
+  };
+}, [dependencies]); // Dependency array
+```
+
+- The **first argument** is a function where we place side-effect logic.
+- The **second argument** is an optional **dependency array**.
+
+---
+
+## **2. Why Use \*\***\*\***\*\***`useEffect`\***\*\*\*\*\*\*\***?\*\*
+
+Before Hooks, side effects were handled in class components using lifecycle methods:
+
+- `componentDidMount()` → Runs once when the component mounts.
+- `componentDidUpdate()` → Runs when the component updates.
+- `componentWillUnmount()` → Runs before the component unmounts.
+
+With functional components, `useEffect` allows us to **combine all these lifecycle methods into one hook**, making the code cleaner.
+
+---
+
+## \*\*3. The Dependency Array in \*\***`useEffect`**
+
+The **dependency array** controls when the effect runs.
+
+| Scenario                                                   | Description                                                                |
+| ---------------------------------------------------------- | -------------------------------------------------------------------------- |
+| No dependency array (`useEffect(() => {...})`)             | Runs **on every render**                                                   |
+| Empty dependency array (`useEffect(() => {...}, [])`)      | Runs **only on mount** (like `componentDidMount`)                          |
+| With dependencies (`useEffect(() => {...}, [dep1, dep2])`) | Runs **when any dependency changes**                                       |
+| Cleanup function (`return () => {...}`)                    | Runs **before the component unmounts** or **before re-running the effect** |
+
+---
+
+## **4. All Scenarios of the Dependency Array**
+
+### **Scenario 1: \*\***\*\***\*\***`useEffect`\***\*\*\*\*\*\*\*** without a dependency array\*\*
+
+```jsx
+useEffect(() => {
+  console.log("Effect runs on every render");
+});
+```
+
+**Behavior:**
+
+- Runs **after every render and re-render**.
+- **Rarely used** because it causes unnecessary executions.
+
+---
+
+### **Scenario 2: \*\***\*\***\*\***`useEffect`\***\*\*\*\*\*\*\*** with an empty dependency array (**\*\*\*\***`[]`**\*\*\*\***\*\*\*\*)\*\*
+
+```jsx
+useEffect(() => {
+  console.log("Runs only on mount");
+}, []);
+```
+
+**Behavior:**
+
+- Runs **only once** after the initial render.
+- Equivalent to `componentDidMount()` in class components.
+
+**Use Cases:**
+
+- Fetching data when the component loads.
+- Subscribing to events (e.g., WebSocket, API polling).
+
+---
+
+### **Scenario 3: \*\***\*\***\*\***`useEffect`\***\*\*\*\*\*\*\*** with specific dependencies\*\*
+
+```jsx
+const [count, setCount] = useState(0);
+
+useEffect(() => {
+  console.log(`Count changed: ${count}`);
+}, [count]);
+```
+
+**Behavior:**
+
+- Runs **only when \*\***\*\***\*\***`count`\***\*\*\*\*\*\*\*** changes\*\*.
+- Equivalent to `componentDidUpdate()` in class components.
+
+**Use Cases:**
+
+- Fetching new data when filters change.
+- Updating state when props change.
+
+---
+
+### \*\*Scenario 4: Cleanup Function in \*\***`useEffect`**
+
+```jsx
+useEffect(() => {
+  console.log("Effect executed");
+
+  return () => {
+    console.log("Cleanup executed before re-running or unmounting");
+  };
+}, [count]);
+```
+
+**Behavior:**
+
+- Cleanup runs **before the component unmounts** or **before running the effect again**.
+
+**Use Cases:**
+
+- Removing event listeners.
+- Cleaning up timers (`setInterval` / `setTimeout`).
+- Canceling API requests.
+
+---
+
+## **5. Common Mistakes and Best Practices**
+
+| Mistake                            | Explanation                                                 |
+| ---------------------------------- | ----------------------------------------------------------- |
+| Not including dependencies         | Can cause stale values to be used in the effect.            |
+| Including unnecessary dependencies | Can cause unnecessary re-renders.                           |
+| Forgetting the cleanup function    | Can lead to memory leaks (e.g., unremoved event listeners). |
+
+---
+
+## **6. Conclusion**
+
+The `useEffect` hook is essential for handling side effects in functional components. The **dependency array** controls how and when the effect runs. Proper usage ensures optimal performance and prevents unnecessary re-renders.
+
+---
+
+# React Lifecycle Methods in Functional Components Using `useEffect`
+
+## Introduction
+
+In React, class components use lifecycle methods such as:
+
+- `componentDidMount()` (Runs after the component is mounted)
+- `componentDidUpdate()` (Runs after the component updates)
+- `componentWillUnmount()` (Runs before the component is removed from the DOM)
+
+In **functional components**, these lifecycle behaviors are managed using the `useEffect` hook. This README explains how to replace lifecycle methods with `useEffect` in functional components.
+
+---
+
+## 1. `componentDidMount()` → `useEffect(() => {...}, [])`
+
+### **When It Runs**
+
+- Executes **once**, after the component is mounted (just like `componentDidMount`).
+- Used for **fetching data, setting up subscriptions, and initializing values**.
+
+### **Example: Showing a Welcome Message**
+
+```jsx
+import { useEffect } from "react";
+
+const Welcome = () => {
+  useEffect(() => {
+    console.log("Welcome component is now on the screen!");
+  }, []); // Empty dependency array means it runs only once (on mount)
+
+  return <h1>Welcome to my website!</h1>;
+};
+
+export default Welcome;
+```
+
+### **Key Takeaways**
+
+✅ The `useEffect` runs **only once**, just like `componentDidMount()`.
+✅ The **empty dependency array (**\*\*\***\*`[]`**\*\*\*\***\*\*\*\*\*\*\*\*\*\*\*\*)** ensures it runs only on the first render.
+✅ Useful for \*\*fetching data, initializing timers, or setting up event listeners\*\*.
+
+---
+
+## 2. `componentDidUpdate()` → `useEffect(() => {...}, [dependency])`
+
+### **When It Runs**
+
+- Executes **after state or props change**.
+- Used to **handle updates** that depend on new state/props.
+
+### **Example: Counting Button Clicks**
+
+```jsx
+import { useState, useEffect } from "react";
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    console.log(`Count changed to ${count}`);
+  }, [count]); // Runs when `count` changes
+
+  return (
+    <div>
+      <h1>Count: {count}</h1>
+      <button onClick={() => setCount(count + 1)}>Click Me</button>
+    </div>
+  );
+};
+
+export default Counter;
+```
+
+### **Key Takeaways**
+
+✅ Runs **every time the **\*\*****\*\*****\*\*****`count`**\*\*\*\***\*\*\*\***\*\*\*\*** state changes**.
+✅ The **dependency array (**\*\*\*\***`[count]`**\*\*\*\***\*\*\*\*\*\*\*\*\*\*\*\*)** tells React to run this effect **whenever **\*\*\*\***\*\*\*\***\*\*\*\***`count`**\*\*\*\***\*\*\*\***\*\*\*\*** updates**.
+✅ Useful for **fetching new data, updating the DOM, or calling external APIs based on changes\*\*.
+
+---
+
+## 3. `componentWillUnmount()` → Cleanup Function in `useEffect`
+
+### **When It Runs**
+
+- Executes **before the component is removed from the DOM**.
+- Used for **cleanup operations** like clearing timers or unsubscribing from events.
+
+### **Example: Setting and Clearing a Timer**
+
+```jsx
+import { useEffect } from "react";
+
+const Timer = () => {
+  useEffect(() => {
+    const interval = setInterval(() => {
+      console.log("Tick...");
+    }, 1000);
+
+    return () => {
+      console.log("Timer is being removed, clearing interval...");
+      clearInterval(interval);
+    };
+  }, []); // Runs once when mounted, cleanup runs when unmounted
+
+  return <h1>Timer is running...</h1>;
+};
+
+export default Timer;
+```
+
+### **Key Takeaways**
+
+✅ Runs **once when the component mounts**, and **cleans up before unmounting**.
+✅ The \*\*return function inside \*\***`useEffect`** acts like `componentWillUnmount()`.
+✅ Useful for **clearing timers, removing event listeners, or unsubscribing from API calls**.
+
+---
+
+## Comparison: Class Components vs Functional Components
+
+| Lifecycle Method             | Class Component                                    | Functional Component (Hooks)                  |
+| ---------------------------- | -------------------------------------------------- | --------------------------------------------- |
+| **`componentDidMount()`**    | `componentDidMount() { ... }`                      | `useEffect(() => {...}, [])`                  |
+| **`componentDidUpdate()`**   | `componentDidUpdate(prevProps, prevState) { ... }` | `useEffect(() => {...}, [dependency])`        |
+| **`componentWillUnmount()`** | `componentWillUnmount() { ... }`                   | `useEffect(() => { return () => {...} }, [])` |
+
+---
+
+## Conclusion
+
+- **Functional components** use `useEffect` to manage lifecycle behaviors instead of class component methods.
+- The **dependency array** controls when `useEffect` runs:
+  - `[]` → Runs **once** (on mount)
+  - `[dependency]` → Runs when that **dependency changes**
+  - `return () => {}` → Runs **before unmounting** (for cleanup)
+- `useEffect` makes functional components **cleaner and more reusable** compared to class components.
+
+By understanding and using `useEffect`, you can **replace lifecycle methods** and write modern, efficient React components. 🚀
+
+---
+
+# Conditional Rendering in React
+
+In React, **conditional rendering** enables components to render different outputs based on specific conditions, allowing for dynamic and interactive user interfaces. citeturn0search0
+
+## Techniques for Conditional Rendering
+
+1. **`if` Statements:**
+   Use standard `if` statements to determine which component or element to render.
+
+   _Example:_
+
+   ```jsx
+   function Greeting({ isLoggedIn }) {
+     if (isLoggedIn) {
+       return <h1>Welcome back!</h1>;
+     }
+     return <h1>Please sign up.</h1>;
+   }
+   ```
+
+   citeturn0search6
+
+2. **Ternary Operator:**
+   Utilize the ternary operator (`condition ? trueExpression : falseExpression`) for inline conditional rendering within JSX.
+
+   _Example:_
+
+   ```jsx
+   function Greeting({ isLoggedIn }) {
+     return (
+       <div>
+         {isLoggedIn ? <h1>Welcome back!</h1> : <h1>Please sign up.</h1>}
+       </div>
+     );
+   }
+   ```
+
+   citeturn0search6
+
+3. **Logical AND (`&&`) Operator:**
+   Render an element only if the condition is `true`. If the condition is `false`, React skips rendering that part.
+
+   _Example:_
+
+   ```jsx
+   function Notification({ hasUnreadMessages }) {
+     return <div>{hasUnreadMessages && <p>You have unread messages.</p>}</div>;
+   }
+   ```
+
+   _Caution:_ Ensure the condition evaluates to a boolean to prevent unexpected rendering behavior, such as rendering `0` when the condition is `0`. citeturn0search0
+
+4. **Switch Statements:**
+   For multiple conditional renderings, a `switch` statement can select among various components based on a condition.
+
+   _Example:_
+
+   ```jsx
+   function Page({ page }) {
+     switch (page) {
+       case "home":
+         return <HomePage />;
+       case "about":
+         return <AboutPage />;
+       case "contact":
+         return <ContactPage />;
+       default:
+         return <NotFoundPage />;
+     }
+   }
+   ```
+
+   citeturn0search7
+
+5. **Element Variables:**
+   Assign JSX elements to variables based on conditions and include them in the component's output.
+
+   _Example:_
+
+   ```jsx
+   function Greeting({ isLoggedIn }) {
+     let greetingMessage;
+     if (isLoggedIn) {
+       greetingMessage = <h1>Welcome back!</h1>;
+     } else {
+       greetingMessage = <h1>Please sign up.</h1>;
+     }
+     return <div>{greetingMessage}</div>;
+   }
+   ```
+
+   citeturn0search11
+
+## Best Practices
+
+- **Clarity and Readability:** Keep conditional rendering logic straightforward to enhance code readability and maintainability. Avoid deeply nested conditions that can make the code hard to follow.
+
+- **Component Extraction:** For complex conditions, consider extracting the conditional logic into separate components. This modular approach promotes reusability and cleaner code structures.
+
+- **Explicit Booleans:** Ensure that conditions evaluate explicitly to boolean values to prevent unexpected rendering behavior, especially when using logical operators.
+
+By effectively implementing conditional rendering, React developers can create dynamic and responsive user interfaces that adapt seamlessly to user interactions and application state changes.

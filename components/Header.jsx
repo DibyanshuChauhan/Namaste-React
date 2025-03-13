@@ -1,4 +1,4 @@
-import { LOGO_URL } from "./utils/constant";
+import { LOGO_URL } from "../utils/constant";
 
 const Header = () => {
     return (
