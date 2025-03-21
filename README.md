@@ -2227,9 +2227,9 @@ export default Counter;
 
 ### **Key Takeaways**
 
-✅ Runs **every time the **\*\*****\*\*****\*\*****`count`**\*\*\*\***\*\*\*\***\*\*\*\*** state changes**.
+✅ Runs **every time the **\*\*\***\*\*\*\*\***\*\*\***\*`count`**\*\*\*\***\*\*\*\***\*\*\*\*** state changes**.
 ✅ The **dependency array (**\*\*\*\***`[count]`**\*\*\*\***\*\*\*\*\*\*\*\*\*\*\*\*)** tells React to run this effect **whenever **\*\*\*\***\*\*\*\***\*\*\*\***`count`**\*\*\*\***\*\*\*\***\*\*\*\*** updates**.
-✅ Useful for **fetching new data, updating the DOM, or calling external APIs based on changes\*\*.
+✅ Useful for \*\*fetching new data, updating the DOM, or calling external APIs based on changes\*\*.
 
 ---
 
@@ -2396,3 +2396,290 @@ In React, **conditional rendering** enables components to render different outpu
 - **Explicit Booleans:** Ensure that conditions evaluate explicitly to boolean values to prevent unexpected rendering behavior, especially when using logical operators.
 
 By effectively implementing conditional rendering, React developers can create dynamic and responsive user interfaces that adapt seamlessly to user interactions and application state changes.
+
+# React Router Integration in React 19 Applications
+
+This guide provides an overview of integrating React Router version 7 into a React 19 application, facilitating efficient navigation and routing within single-page applications (SPAs).
+
+## Table of Contents
+
+- [Introduction](#introduction)
+- [Installation](#installation)
+- [Setting Up the Router](#setting-up-the-router)
+- [Creating Navigation Links](#creating-navigation-links)
+- [Nested Routes](#nested-routes)
+- [Dynamic Route Parameters](#dynamic-route-parameters)
+- [Programmatic Navigation](#programmatic-navigation)
+- [Handling 404 Pages](#handling-404-pages)
+- [Additional Resources](#additional-resources)
+
+## Introduction
+
+React Router is a standard library for routing in React applications. It enables navigation between different components or pages without requiring a full page refresh, enhancing the user experience in SPAs.
+
+**Key Features:**
+
+- **Declarative Routing:** Define routes using UI components for straightforward and readable configurations.
+- **Nested Routes:** Support for nested routing structures, allowing complex and hierarchical layouts.
+- **Programmatic Navigation:** Hooks like `useNavigate` enable navigation based on specific conditions or user actions.
+- **Dynamic Route Parameters:** Routes can accept parameters, facilitating dynamic content rendering based on the URL.
+
+## Installation
+
+To begin, install the `react-router-dom` package, which provides the necessary bindings for routing in web applications:
+
+```bash
+npm install react-router-dom
+```
+
+Ensure that your project is set up with React 19 and that all dependencies are up to date.
+
+## Setting Up the Router
+
+Wrap your main application component with the `BrowserRouter` to enable routing:
+
+```jsx
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Home from "./components/Home";
+import About from "./components/About";
+import Contact from "./components/Contact";
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+      </Routes>
+    </Router>
+  );
+}
+
+export default App;
+```
+
+In this setup, the `Routes` component contains individual `Route` components that define the path and the corresponding component to render.
+
+## Creating Navigation Links
+
+Use the `Link` component to enable navigation between different routes without reloading the page:
+
+```jsx
+import React from "react";
+import { Link } from "react-router-dom";
+
+function Navbar() {
+  return (
+    <nav>
+      <ul>
+        <li>
+          <Link to="/">Home</Link>
+        </li>
+        <li>
+          <Link to="/about">About</Link>
+        </li>
+        <li>
+          <Link to="/contact">Contact</Link>
+        </li>
+      </ul>
+    </nav>
+  );
+}
+
+export default Navbar;
+```
+
+The `Link` component ensures that navigation is handled by React Router, preventing full page reloads.
+
+## Nested Routes
+
+React Router allows for nested routes to create more complex UI structures. For example, if the `About` component has nested routes:
+
+```jsx
+import React from "react";
+import { Link, Routes, Route, Outlet } from "react-router-dom";
+import CompanyHistory from "./CompanyHistory";
+import Team from "./Team";
+
+function About() {
+  return (
+    <div>
+      <h2>About Us</h2>
+      <nav>
+        <ul>
+          <li>
+            <Link to="history">Company History</Link>
+          </li>
+          <li>
+            <Link to="team">Our Team</Link>
+          </li>
+        </ul>
+      </nav>
+      <Outlet />
+    </div>
+  );
+}
+
+function AboutRoutes() {
+  return (
+    <Routes>
+      <Route path="/" element={<About />}>
+        <Route path="history" element={<CompanyHistory />} />
+        <Route path="team" element={<Team />} />
+      </Route>
+    </Routes>
+  );
+}
+
+export default AboutRoutes;
+```
+
+Here, the `About` component contains its own navigation and an `Outlet` where nested routes will be rendered. The `AboutRoutes` component sets up these nested routes.
+
+## Dynamic Route Parameters
+
+To create routes with dynamic parameters, define the route path with a parameter placeholder:
+
+```jsx
+import React from "react";
+import { useParams } from "react-router-dom";
+
+function UserProfile() {
+  let { userId } = useParams();
+  return <div>User ID: {userId}</div>;
+}
+
+// In your main Routes setup
+<Routes>
+  <Route path="/user/:userId" element={<UserProfile />} />
+</Routes>;
+```
+
+In this example, navigating to `/user/123` will render the `UserProfile` component with `userId` equal to `123`.
+
+## Programmatic Navigation
+
+Use the `useNavigate` hook to navigate programmatically within your components:
+
+```jsx
+import React from "react";
+import { useNavigate } from "react-router-dom";
+
+function Login() {
+  let navigate = useNavigate();
+
+  function handleLogin() {
+    // Perform login logic
+    navigate("/dashboard");
+  }
+
+  return (
+    <div>
+      <button onClick={handleLogin}>Log In</button>
+    </div>
+  );
+}
+
+export default Login;
+```
+
+Here, after the login logic executes, the user is programmatically navigated to the `/dashboard` route.
+
+## Handling 404 Pages
+
+To handle undefined routes, add a catch-all route using the `*` path:
+
+```jsx
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Home from "./components/Home";
+import About from "./components/About";
+import NotFound from "./components/NotFound";
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Router>
+  );
+}
+
+export default App;
+```
+
+# Routing in Web Development
+
+In web development, **routing** determines how an application responds to client requests for different URLs or endpoints. Two primary routing approaches are **server-side routing** and **client-side routing**, each with distinct mechanisms and user experiences.
+
+## Server-Side Routing
+
+- **Mechanism**: The server processes each navigation request, sending back a new HTML page.
+
+- **Process**:
+
+  - User clicks a link or enters a URL.
+  - Browser sends an HTTP request to the server.
+  - Server responds with the appropriate HTML content.
+  - Browser reloads the entire page with the new content.
+
+- **Characteristics**:
+  - Full page reloads for each navigation.
+  - Simpler implementation, as routing logic resides on the server.
+  - Better for SEO, as search engines can easily index server-rendered pages.
+
+## Client-Side Routing
+
+- **Mechanism**: The browser handles navigation using JavaScript, updating the view without reloading the entire page.
+
+- **Process**:
+
+  - User clicks a link or interacts with the application.
+  - Client-side router intercepts the navigation request.
+  - Router dynamically updates the URL and renders the corresponding content.
+
+- **Characteristics**:
+  - No full page reloads; only specific parts of the page are updated.
+  - Faster transitions and a more seamless user experience.
+  - Commonly used in Single-Page Applications (SPAs).
+  - Requires JavaScript frameworks or libraries, adding complexity.
+
+## Key Differences
+
+- **Page Reloads**:
+
+  - _Server-Side_: Each navigation triggers a full page reload.
+  - _Client-Side_: Navigations update content without reloading the entire page.
+
+- **Performance**:
+
+  - _Server-Side_: May result in slower transitions due to full page reloads.
+  - _Client-Side_: Offers faster transitions and a more responsive user interface.
+
+- **SEO**:
+
+  - _Server-Side_: More SEO-friendly, as search engines can easily index the content.
+  - _Client-Side_: May require additional configurations for proper indexing.
+
+- **Development Complexity**:
+  - _Server-Side_: Simpler to implement, with routing logic on the server.
+  - _Client-Side_: Requires additional setup and maintenance of client-side routing libraries.
+
+In summary, server-side routing involves the server handling navigation requests, leading to full page reloads, while client-side routing allows the browser to manage navigation, enabling dynamic content updates without refreshing the entire page. The choice between the two depends on factors like application requirements, performance considerations, SEO needs, and development complexity.
+
+## Examples
+
+- **Server-Side Routing**: Frameworks like [Yesod](https://en.wikipedia.org/wiki/Yesod_%28web_framework%29) implement server-side routing by defining routes that the server uses to determine how to respond to different URLs.
+
+- **Client-Side Routing**: Libraries such as [Director](https://github.com/flatiron/director) enable client-side routing by managing URL changes within the browser without requiring full page reloads.
+
+## Additional Resources
+
+- For a practical example of client-side routing with minimal JavaScript, refer to the [minimal-routing](https://github.com/ardislu/minimal-routing) demo.
+
+- To understand the differences between server-side and client-side routing in the context of Vite, see the [Server Routing VS Client Routing](https://vite-plugin-ssr.com/server-routing-vs-client-routing) article.
